@@ -99,7 +99,6 @@ struct AppView: View {
             } label: {
               tab.label.environment(\.symbolVariants, tab == selectedTab ? .fill : .none)
             }
-            .badge(badgeFor(tab: tab))
           }
         } else {
           TabSection(section.title) {
@@ -136,7 +135,6 @@ struct AppView: View {
                   tab.label.environment(\.symbolVariants, tab == selectedTab ? .fill : .none)
                 }
                 .tabPlacement(tab.tabPlacement)
-                .badge(badgeFor(tab: tab))
               }
             }
           }
@@ -177,7 +175,6 @@ struct AppView: View {
     }
 
     HapticManager.shared.fireHaptic(.tabSelection)
-    SoundEffectManager.shared.playSound(.tabSelection)
 
     if selectedTab == newTab {
       selectedTabScrollToTop = newTab.id
@@ -189,15 +186,6 @@ struct AppView: View {
     }
 
     selectedTab = newTab
-  }
-
-  private func badgeFor(tab: AppTab) -> Int {
-    if tab == .notifications, selectedTab != tab,
-      let token = appAccountsManager.currentAccount.oauthToken
-    {
-      return userPreferences.notificationsCount[token] ?? 0
-    }
-    return 0
   }
 
   var notificationsSecondaryColumn: some View {

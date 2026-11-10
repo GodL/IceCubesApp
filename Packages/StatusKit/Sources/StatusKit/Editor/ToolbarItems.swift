@@ -194,7 +194,6 @@ extension StatusEditor {
     private func postStatus(with model: EditorStore, isMainPost: Bool) async -> Status? {
       let status = await model.postStatus()
       if status != nil, isMainPost {
-        SoundEffectManager.shared.playSound(.tootSent)
         #if !targetEnvironment(macCatalyst)
           if !mainStore.mode.isInShareExtension, !preferences.requestedReview {
             if let scene = UIApplication.shared.connectedScenes.first(where: {

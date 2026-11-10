@@ -22,7 +22,6 @@ extension View {
     userPreferences: UserPreferences,
     theme: Theme,
     watcher: StreamWatcher,
-    pushNotificationsService: PushNotificationsService,
     appIntentService: AppIntentService,
     quickLook: QuickLook,
     toastCenter: ToastCenter,
@@ -37,7 +36,6 @@ extension View {
       .environment(userPreferences)
       .environment(theme)
       .environment(watcher)
-      .environment(pushNotificationsService)
       .environment(appIntentService)
       .environment(toastCenter)
       .environment(\.isSupporter, isSupporter)
@@ -56,9 +54,6 @@ extension View {
         } else {
           watcher.stopWatching()
         }
-      }
-      .task(id: appAccountsManager.pushAccounts.map(\.token)) {
-        pushNotificationsService.tokens = appAccountsManager.pushAccounts.map(\.token)
       }
   }
 
@@ -206,15 +201,6 @@ extension View {
           SettingsTabs(isModal: true)
             .withEnvironments()
             .preferredColorScheme(Theme.shared.selectedScheme == .dark ? .dark : .light)
-        case .accountPushNotficationsSettings:
-          if let subscription = PushNotificationsService.shared.subscriptions.first(where: {
-            $0.account.token == AppAccountsManager.shared.currentAccount.oauthToken
-          }) {
-            NavigationSheet { PushNotificationsView(subscription: subscription) }
-              .withEnvironments()
-          } else {
-            EmptyView()
-          }
         case .about:
           NavigationSheet { AboutView() }
             .withEnvironments()
@@ -251,7 +237,6 @@ extension View {
       .environment(CurrentInstance.shared)
       .environment(Theme.shared)
       .environment(AppAccountsManager.shared)
-      .environment(PushNotificationsService.shared)
       .environment(AppAccountsManager.shared.currentClient)
       .environment(QuickLook.shared)
       .environment(ToastCenter.shared)

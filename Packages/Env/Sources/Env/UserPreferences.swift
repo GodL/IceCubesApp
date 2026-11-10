@@ -38,7 +38,6 @@ import SwiftUI
     @AppStorage("haptic_tab") public var hapticTabSelectionEnabled = true
     @AppStorage("haptic_timeline") public var hapticTimelineEnabled = true
     @AppStorage("haptic_button_press") public var hapticButtonPressEnabled = true
-    @AppStorage("sound_effect_enabled") public var soundEffectEnabled = true
 
     @AppStorage("show_alt_text_for_media") public var showAltTextForMedia = true
 
@@ -85,12 +84,12 @@ import SwiftUI
     }
 
     private func prepareTranslationType() {
-      let sharedDefault = UserDefaults.standard
-      if let alwaysUseDeepl = (sharedDefault.object(forKey: "always_use_deepl") as? Bool) {
+      let defaults = UserDefaults.standard
+      if let alwaysUseDeepl = (defaults.object(forKey: "always_use_deepl") as? Bool) {
         if alwaysUseDeepl {
           preferredTranslationType = .useDeepl
         }
-        sharedDefault.removeObject(forKey: "always_use_deepl")
+        defaults.removeObject(forKey: "always_use_deepl")
       }
       #if canImport(_Translation_SwiftUI)
         if #unavailable(iOS 17.4),
@@ -106,7 +105,6 @@ import SwiftUI
     }
   }
 
-  public static let sharedDefault = UserDefaults(suiteName: "group.com.thomasricouard.IceCubesApp")
   public static let shared = UserPreferences()
   private let storage = Storage()
 
@@ -266,12 +264,6 @@ import SwiftUI
   public var hapticButtonPressEnabled: Bool {
     didSet {
       storage.hapticButtonPressEnabled = hapticButtonPressEnabled
-    }
-  }
-
-  public var soundEffectEnabled: Bool {
-    didSet {
-      storage.soundEffectEnabled = soundEffectEnabled
     }
   }
 
@@ -470,26 +462,6 @@ import SwiftUI
     }
   }
 
-  public var notificationsCount: [OauthToken: Int] = [:] {
-    didSet {
-      for (key, value) in notificationsCount {
-        Self.sharedDefault?.set(value, forKey: "push_notifications_count_\(key.createdAt)")
-      }
-    }
-  }
-
-  public var totalNotificationsCount: Int {
-    notificationsCount.compactMap { $0.value }.reduce(0, +)
-  }
-
-  public func reloadNotificationsCount(tokens: [OauthToken]) {
-    notificationsCount = [:]
-    for token in tokens {
-      notificationsCount[token] =
-        Self.sharedDefault?.integer(forKey: "push_notifications_count_\(token.createdAt)") ?? 0
-    }
-  }
-
   public var serverPreferences: ServerPreferences?
 
   public func setClient(client: MastodonClient) {
@@ -547,7 +519,6 @@ import SwiftUI
     hapticTabSelectionEnabled = storage.hapticTabSelectionEnabled
     hapticTimelineEnabled = storage.hapticTimelineEnabled
     hapticButtonPressEnabled = storage.hapticButtonPressEnabled
-    soundEffectEnabled = storage.soundEffectEnabled
     showAltTextForMedia = storage.showAltTextForMedia
     showiPadSecondaryColumn = storage.showiPadSecondaryColumn
     swipeActionsStatusTrailingRight = storage.swipeActionsStatusTrailingRight

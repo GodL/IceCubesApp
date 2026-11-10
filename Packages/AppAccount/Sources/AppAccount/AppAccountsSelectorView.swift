@@ -4,7 +4,6 @@ import SwiftUI
 
 @MainActor
 public struct AppAccountsSelectorView: View {
-  @Environment(UserPreferences.self) private var preferences
   @Environment(CurrentAccount.self) private var currentAccount
   @Environment(AppAccountsManager.self) private var appAccounts
   @Environment(Theme.self) private var theme
@@ -18,14 +17,6 @@ public struct AppAccountsSelectorView: View {
   private let avatarConfig: AvatarView.FrameConfig
 
   private let transition: Namespace.ID
-
-  private var showNotificationBadge: Bool {
-    accountsViewModel
-      .filter { $0.account?.id != currentAccount.account?.id }
-      .compactMap(\.appAccount.oauthToken)
-      .map { preferences.notificationsCount[$0] ?? 0 }
-      .reduce(0, +) > 0
-  }
 
   private var preferredHeight: CGFloat {
     var baseHeight: CGFloat = 360
@@ -117,7 +108,7 @@ public struct AppAccountsSelectorView: View {
           .allowsHitTesting(false)
       }
     }.overlay(alignment: .topTrailing) {
-      if !currentAccount.followRequests.isEmpty || showNotificationBadge, accountCreationEnabled {
+      if !currentAccount.followRequests.isEmpty, accountCreationEnabled {
         Circle()
           .fill(Color.red)
           .frame(width: 9, height: 9)
@@ -231,8 +222,7 @@ public struct AppAccountsSelectorView: View {
   private func refreshAccounts() {
     accountsViewModel = []
     for account in appAccounts.availableAccounts {
-      let viewModel: AppAccountViewModel = .init(
-        appAccount: account, isInSettings: false, showBadge: true)
+      let viewModel: AppAccountViewModel = .init(appAccount: account, isInSettings: false)
       accountsViewModel.append(viewModel)
     }
   }

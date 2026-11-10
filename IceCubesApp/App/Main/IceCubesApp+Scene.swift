@@ -11,7 +11,6 @@ extension IceCubesApp {
         .applyTheme(theme)
         .onAppear {
           setupRevenueCat()
-          refreshPushSubs()
         }
         .withAppDependencyGraph(
           appAccountsManager: appAccountsManager,
@@ -20,7 +19,6 @@ extension IceCubesApp {
           userPreferences: userPreferences,
           theme: theme,
           watcher: watcher,
-          pushNotificationsService: pushNotificationsService,
           appIntentService: appIntentService,
           quickLook: quickLook,
           toastCenter: toastCenter,
@@ -39,25 +37,6 @@ extension IceCubesApp {
             .withEnvironments()
           } else {
             EmptyView()
-          }
-        }
-        .onChange(of: pushNotificationsService.handledNotification) { _, newValue in
-          if newValue != nil {
-            pushNotificationsService.handledNotification = nil
-            if appAccountsManager.currentAccount.oauthToken?.accessToken
-              != newValue?.account.token.accessToken,
-              let account = appAccountsManager.availableAccounts.first(where: {
-                $0.oauthToken?.accessToken == newValue?.account.token.accessToken
-              })
-            {
-              appAccountsManager.currentAccount = account
-              DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
-                selectedTab = .notifications
-                pushNotificationsService.handledNotification = newValue
-              }
-            } else {
-              selectedTab = .notifications
-            }
           }
         }
         .onChange(of: appIntentService.handledIntent) { _, _ in

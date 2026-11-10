@@ -7,7 +7,7 @@ import SwiftUI
 
 @MainActor
 @Observable public class AppAccountsManager {
-  @AppStorage("latestCurrentAccountKey", store: UserPreferences.sharedDefault)
+  @AppStorage("latestCurrentAccountKey")
   public static var latestCurrentAccountKey: String = ""
 
   public var currentAccount: AppAccount {
@@ -21,11 +21,6 @@ import SwiftUI
 
   public var availableAccounts: [AppAccount]
   public var currentClient: MastodonClient
-
-  public var pushAccounts: [PushAccount] {
-    availableAccounts.filter { $0.oauthToken != nil }
-      .map { .init(server: $0.server, token: $0.oauthToken!, accountName: $0.accountName) }
-  }
 
   public static var shared = AppAccountsManager()
 

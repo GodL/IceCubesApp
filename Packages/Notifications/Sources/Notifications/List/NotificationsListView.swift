@@ -132,12 +132,10 @@ public struct NotificationsListView: View {
       policy = await dataSource.fetchPolicy(client: client)
     }
     .refreshable {
-      SoundEffectManager.shared.playSound(.pull)
       HapticManager.shared.fireHaptic(.dataRefresh(intensity: 0.3))
       await fetchNotifications()
       policy = await dataSource.fetchPolicy(client: client)
       HapticManager.shared.fireHaptic(.dataRefresh(intensity: 0.7))
-      SoundEffectManager.shared.playSound(.refresh)
     }
     .onChange(of: watcher.latestEvent?.id) {
       if let latestEvent = watcher.latestEvent {

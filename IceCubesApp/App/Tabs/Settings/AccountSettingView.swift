@@ -12,7 +12,6 @@ struct AccountSettingsView: View {
   @Environment(\.dismiss) private var dismiss
   @Environment(\.openURL) private var openURL
 
-  @Environment(PushNotificationsService.self) private var pushNotifications
   @Environment(CurrentAccount.self) private var currentAccount
   @Environment(CurrentInstance.self) private var currentInstance
   @Environment(Theme.self) private var theme
@@ -48,14 +47,6 @@ struct AccountSettingsView: View {
           }
           .buttonStyle(.plain)
         }
-        if let subscription = pushNotifications.subscriptions.first(where: {
-          $0.account.token == appAccount.oauthToken
-        }) {
-          NavigationLink(destination: PushNotificationsView(subscription: subscription)) {
-            Label(
-              "settings.general.push-notifications", systemImage: "bell.and.waves.left.and.right")
-          }
-        }
       }
       .listRowBackground(theme.primaryBackgroundColor)
 
@@ -87,11 +78,6 @@ struct AccountSettingsView: View {
             Task {
               let client = MastodonClient(server: appAccount.server, oauthToken: token)
               await timelineCache.clearCache(for: client.id)
-              if let sub = pushNotifications.subscriptions.first(where: {
-                $0.account.token == token
-              }) {
-                await sub.deleteSubscription()
-              }
               appAccountsManager.delete(account: appAccount)
               Telemetry.signal("account.removed")
               dismiss()

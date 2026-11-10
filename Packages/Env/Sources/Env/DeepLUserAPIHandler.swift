@@ -8,7 +8,7 @@ public enum DeepLUserAPIHandler {
   private static let key = "DeepL"
   private static var keychain: KeychainSwift {
     let keychain = KeychainSwift()
-    #if !DEBUG && !targetEnvironment(simulator)
+    #if !targetEnvironment(simulator)
       keychain.accessGroup = AppInfo.keychainGroup
     #endif
     return keychain

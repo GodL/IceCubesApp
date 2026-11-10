@@ -26,7 +26,6 @@ struct IceCubesApp: App {
   @State var currentInstance = CurrentInstance.shared
   @State var currentAccount = CurrentAccount.shared
   @State var userPreferences = UserPreferences.shared
-  @State var pushNotificationsService = PushNotificationsService.shared
   @State var appIntentService = AppIntentService.shared
   @State var watcher = StreamWatcher.shared
   @State var quickLook = QuickLook.shared
@@ -61,8 +60,6 @@ struct IceCubesApp: App {
     case .active:
       watcher.watch(streams: [.user, .direct])
       UNUserNotificationCenter.current().setBadgeCount(0)
-      userPreferences.reloadNotificationsCount(
-        tokens: appAccountsManager.availableAccounts.compactMap(\.oauthToken))
       Task {
         await userPreferences.refreshServerPreferences()
       }
@@ -80,10 +77,6 @@ struct IceCubesApp: App {
       }
     }
   }
-
-  func refreshPushSubs() {
-    PushNotificationsService.shared.requestPushNotifications()
-  }
 }
 
 class AppDelegate: UIResponder, UIApplicationDelegate {
@@ -93,32 +86,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
   ) -> Bool {
     try? AVAudioSession.sharedInstance().setCategory(.ambient, options: .mixWithOthers)
     try? AVAudioSession.sharedInstance().setActive(true)
-    PushNotificationsService.shared.setAccounts(accounts: AppAccountsManager.shared.pushAccounts)
     Telemetry.setup()
     Telemetry.signal("app.launched")
     #if !targetEnvironment(macCatalyst)
       WishKit.configure(with: "AF21AE07-3BA9-4FE2-BFB1-59A3B3941730")
     #endif
     return true
-  }
-
-  func application(
-    _: UIApplication,
-    didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data
-  ) {
-    PushNotificationsService.shared.pushToken = deviceToken
-    Task {
-      PushNotificationsService.shared.setAccounts(accounts: AppAccountsManager.shared.pushAccounts)
-      await PushNotificationsService.shared.updateSubscriptions(forceCreate: false)
-    }
-  }
-
-  func application(_: UIApplication, didFailToRegisterForRemoteNotificationsWithError _: Error) {}
-
-  func application(_: UIApplication, didReceiveRemoteNotification _: [AnyHashable: Any]) async
-    -> UIBackgroundFetchResult
-  {
-    return .noData
   }
   
 

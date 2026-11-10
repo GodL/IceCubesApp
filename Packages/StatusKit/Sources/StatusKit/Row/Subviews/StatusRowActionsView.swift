@@ -363,7 +363,6 @@ struct StatusRowActionsView: View {
       HapticManager.shared.fireHaptic(.notification(.success))
       switch action {
       case .respond:
-        SoundEffectManager.shared.playSound(.share)
         #if targetEnvironment(macCatalyst) || os(visionOS)
           openWindow(
             value: WindowDestinationEditor.replyToStatusEditor(
@@ -373,16 +372,12 @@ struct StatusRowActionsView: View {
             status: viewModel.localStatus ?? viewModel.status)
         #endif
       case .favorite:
-        SoundEffectManager.shared.playSound(.favorite)
         await statusDataController.toggleFavorite(remoteStatus: viewModel.localStatusId)
       case .bookmark:
-        SoundEffectManager.shared.playSound(.bookmark)
         await statusDataController.toggleBookmark(remoteStatus: viewModel.localStatusId)
       case .boost:
-        SoundEffectManager.shared.playSound(.boost)
         await statusDataController.toggleReblog(remoteStatus: viewModel.localStatusId)
       case .quote:
-        SoundEffectManager.shared.playSound(.boost)
         #if targetEnvironment(macCatalyst) || os(visionOS)
           openWindow(value: WindowDestinationEditor.quoteStatusEditor(status: viewModel.status))
         #else

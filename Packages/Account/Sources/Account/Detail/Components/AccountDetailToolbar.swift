@@ -143,12 +143,6 @@ private struct CurrentUserMenuItems: View {
       }
     }
 
-    Button {
-      routerPath.presentedSheet = .accountPushNotficationsSettings
-    } label: {
-      Label("settings.push.navigation-title", systemImage: "bell")
-    }
-
     if account != nil {
       Divider()
 

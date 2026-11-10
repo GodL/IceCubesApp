@@ -14,7 +14,6 @@ import SwiftUI
   let client: MastodonClient
   let isCompact: Bool
   let isInSettings: Bool
-  let showBadge: Bool
 
   var account: Account? {
     didSet {
@@ -33,13 +32,11 @@ import SwiftUI
   }
 
   public init(
-    appAccount: AppAccount, isCompact: Bool = false, isInSettings: Bool = true,
-    showBadge: Bool = false
+    appAccount: AppAccount, isCompact: Bool = false, isInSettings: Bool = true
   ) {
     self.appAccount = appAccount
     self.isCompact = isCompact
     self.isInSettings = isInSettings
-    self.showBadge = showBadge
     client = .init(server: appAccount.server, oauthToken: appAccount.oauthToken)
   }
 

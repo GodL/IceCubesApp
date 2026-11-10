@@ -15,7 +15,6 @@ struct SettingsTabs: View {
   @Environment(\.dismiss) private var dismiss
   @Environment(\.horizontalSizeClass) private var horizontalSizeClass
 
-  @Environment(PushNotificationsService.self) private var pushNotifications
   @Environment(UserPreferences.self) private var preferences
   @Environment(MastodonClient.self) private var client
   @Environment(CurrentInstance.self) private var currentInstance
@@ -147,12 +146,9 @@ struct SettingsTabs: View {
   }
 
   private func logoutAccount(account: AppAccount) async {
-    if let token = account.oauthToken,
-      let sub = pushNotifications.subscriptions.first(where: { $0.account.token == token })
-    {
+    if let token = account.oauthToken {
       let client = MastodonClient(server: account.server, oauthToken: token)
       await timelineCache.clearCache(for: client.id)
-      await sub.deleteSubscription()
       appAccountsManager.delete(account: account)
       Telemetry.signal("account.removed")
     }
@@ -231,9 +227,6 @@ struct SettingsTabs: View {
         }
         .disabled(preferences.preferredBrowser != PreferredBrowser.inAppSafari)
       #endif
-      Toggle(isOn: $preferences.soundEffectEnabled) {
-        Label("settings.other.sound-effect", systemImage: "hifispeaker")
-      }
     } header: {
       Text("settings.section.other")
     }

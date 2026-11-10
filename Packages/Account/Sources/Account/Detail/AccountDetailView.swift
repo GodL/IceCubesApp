@@ -135,7 +135,6 @@ public struct AccountDetailView: View {
     }
     .refreshable {
       Task {
-        SoundEffectManager.shared.playSound(.pull)
         HapticManager.shared.fireHaptic(.dataRefresh(intensity: 0.3))
         await fetchAccount()
         await fetchCollections()
@@ -143,7 +142,6 @@ public struct AccountDetailView: View {
           await tabManager.refreshCurrentTab()
         }
         HapticManager.shared.fireHaptic(.dataRefresh(intensity: 0.7))
-        SoundEffectManager.shared.playSound(.refresh)
       }
     }
     .onChange(of: watcher.latestEvent?.id) {

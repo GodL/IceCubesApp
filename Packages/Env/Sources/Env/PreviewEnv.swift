@@ -9,7 +9,6 @@ extension View {
       .environment(CurrentAccount.shared)
       .environment(UserPreferences.shared)
       .environment(CurrentInstance.shared)
-      .environment(PushNotificationsService.shared)
       .environment(QuickLook.shared)
   }
 }

@@ -113,11 +113,9 @@ public struct ExploreView: View {
       }
       .refreshable {
         Task {
-          SoundEffectManager.shared.playSound(.pull)
           HapticManager.shared.fireHaptic(.dataRefresh(intensity: 0.3))
           await fetchTrending()
           HapticManager.shared.fireHaptic(.dataRefresh(intensity: 0.7))
-          SoundEffectManager.shared.playSound(.refresh)
         }
       }
       .listStyle(.grouped)

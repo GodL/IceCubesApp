@@ -77,7 +77,6 @@ public enum SheetDestination: Identifiable, Hashable {
   case settings
   case about
   case support
-  case accountPushNotficationsSettings
   case report(status: Status)
   case shareImage(image: UIImage, status: Status)
   case editTagGroup(tagGroup: TagGroup, onSaved: ((TagGroup) -> Void)?)
@@ -110,7 +109,7 @@ public enum SheetDestination: Identifiable, Hashable {
       "shareImage"
     case .editTagGroup:
       "editTagGroup"
-    case .settings, .support, .about, .accountPushNotficationsSettings:
+    case .settings, .support, .about:
       "settings"
     case .timelineContentFilter:
       "timelineContentFilter"
